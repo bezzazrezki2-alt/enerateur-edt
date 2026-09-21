@@ -1,0 +1,32 @@
+name: Build Windows Executable
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller python-docx
+
+      - name: Build executable
+        run: pyinstaller --noconsole --onefile --name generateur_edt generateur_edt.py
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: generateur-edt-windows
+          path: dist/generateur_edt.exe
